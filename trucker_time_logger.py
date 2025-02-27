@@ -11,7 +11,8 @@ import viewpage
 class file_manage:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("800x350")
+        self.root.geometry("650x350")
+        self.root.minsize(630, 300)
         customtkinter.set_appearance_mode("light")
         customtkinter.set_default_color_theme("blue")
         self.file_Names = []
@@ -24,7 +25,8 @@ class file_manage:
 
         self.frame.pack(pady =20,padx = 60, fill = "both", expand = True)
         self.frame.grid_columnconfigure((0,1,2), weight=1)
-
+        self.frame.grid_rowconfigure(1, weight=1)
+        self.frame.grid_rowconfigure(2, weight=6)
      
 
   
@@ -73,7 +75,7 @@ class file_manage:
         button1 = customtkinter.CTkButton(master = self.frame,
                                           text = "Daily Log",
                                           command = self.DailyLog,
-                                          height = 10,
+                                          height = 30,
                                           
                                           width = 120,
                                           corner_radius = 25)
@@ -82,7 +84,7 @@ class file_manage:
         button2 = customtkinter.CTkButton(master = self.frame,
                                           text = "View",
                                           command = self.login,
-                                          height = 10,
+                                          height = 30,
                                           width = 120,
                                           fg_color = "#d7c5db",
                                           corner_radius = 25)
@@ -92,13 +94,13 @@ class file_manage:
         button3 = customtkinter.CTkButton(master = self.frame,
                                           text = "Analytics",
                                           command = self.Analytics,
-                                          height = 10,
+                                          height = 30,
                                           width = 120,
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = 10)
 
         page = viewpage.ViewPage(self.frame)
-        page.grid(row=2, column=0, columnspan=3, padx = 10, pady = 10, sticky="swe")
+        page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
 
 
     def Analytics(self):
