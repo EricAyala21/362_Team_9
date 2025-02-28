@@ -35,7 +35,6 @@ class file_manage:
                                           text = "Daily Log",
                                           command = self.DailyLog,
                                           height = 50,
-                                          
                                           width = 120,
                                           corner_radius = 25)
         button1.grid (row = 1, column = 0, padx = 10, pady = 10)
@@ -45,7 +44,6 @@ class file_manage:
                                           command = self.view,
                                           height = 50,
                                           width = 120,
-                                          fg_color = "#d7c5db",
                                           corner_radius = 25)
         button2.grid (row = 1, column = 1, padx = 10, pady = 10)
 
@@ -66,20 +64,15 @@ class file_manage:
 
         self.clearWindow()
 
-
-
-     
-
   
 
         button1 = customtkinter.CTkButton(master = self.frame,
                                           text = "Daily Log",
                                           command = self.DailyLog,
                                           height = 30,
-                                          
                                           width = 120,
                                           corner_radius = 25)
-        button1.grid (row = 1, column = 0, padx = 10, pady = 10)
+        button1.grid (row = 1, column = 0, padx = 10, pady = (10, 5))
 
         button2 = customtkinter.CTkButton(master = self.frame,
                                           text = "View",
@@ -88,7 +81,7 @@ class file_manage:
                                           width = 120,
                                           fg_color = "#d7c5db",
                                           corner_radius = 25)
-        button2.grid (row = 1, column = 1, padx = 10, pady = 10)
+        button2.grid (row = 1, column = 1, padx = 10, pady = (10, 5))
 
 
         button3 = customtkinter.CTkButton(master = self.frame,
@@ -97,7 +90,7 @@ class file_manage:
                                           height = 30,
                                           width = 120,
                                           corner_radius = 25)
-        button3.grid (row = 1, column = 2, padx = 10, pady = 10)
+        button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
 
         page = viewpage.ViewPage(self.frame)
         page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
@@ -107,64 +100,53 @@ class file_manage:
         self.clearWindow()
 
 
-
-     
-
   
-
         button1 = customtkinter.CTkButton(master = self.frame,
                                           text = "Daily Log",
                                           command = self.DailyLog,
-                                          height = 50,
-                                          
+                                          height = 30,
                                           width = 120,
                                           corner_radius = 25)
-        button1.grid (row = 1, column = 0, padx = 10, pady = 10)
+        button1.grid (row = 1, column = 0, padx = 10, pady = (10, 5))
 
         button2 = customtkinter.CTkButton(master = self.frame,
                                           text = "View",
                                           command = self.view,
-                                          height = 50,
+                                          height = 30,
                                           width = 120,
-                                          fg_color = "#d7c5db",
                                           corner_radius = 25)
-        button2.grid (row = 1, column = 1, padx = 10, pady = 10)
+        button2.grid (row = 1, column = 1, padx = 10, pady = (10, 5))
 
 
         button3 = customtkinter.CTkButton(master = self.frame,
                                           text = "Analytics",
                                           command = self.login,
-                                          height = 50,
+                                          height = 30,
                                           width = 120,
+                                          fg_color = "#d7c5db",
                                           corner_radius = 25)
-        button3.grid (row = 1, column = 2, padx = 10, pady = 10)
+        button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
 
 
     def DailyLog(self):
         self.clearWindow()
-
-
-
-
      
 
-  
 
         button1 = customtkinter.CTkButton(master = self.frame,
                                           text = "Daily Log",
                                           command = self.login,
-                                          height = 20,
-                                          
+                                          height = 30,
                                           width = 120,
+                                          fg_color = "#d7c5db",
                                           corner_radius = 25)
         button1.grid (row = 1, column = 0, padx = 10, pady = 10)
 
         button2 = customtkinter.CTkButton(master = self.frame,
                                           text = "View",
                                           command = self.view,
-                                          height = 20,
+                                          height = 30,
                                           width = 120,
-                                          fg_color = "#d7c5db",
                                           corner_radius = 25)
         button2.grid (row = 1, column = 1, padx = 10, pady = 10)
 
@@ -172,7 +154,7 @@ class file_manage:
         button3 = customtkinter.CTkButton(master = self.frame,
                                           text = "Analytics",
                                           command = self.Analytics,
-                                          height = 20,
+                                          height = 30,
                                           width = 120,
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = 10)
