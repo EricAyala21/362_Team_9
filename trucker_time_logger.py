@@ -2,7 +2,7 @@ import customtkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-
+import daily_log
 import viewpage
 
 
@@ -158,6 +158,8 @@ class file_manage:
                                           width = 120,
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = 10)
+        page = daily_log.Daily_Log(self.frame)
+        page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
 
         
         
