@@ -19,7 +19,7 @@ class ViewPage(customtkinter.CTkFrame):
                          "11/30/2024 17:53 8 13",
                          "10/13/2024 15:00 5 10",
                          "09/06/2024 11:27 13 9",
-                         "05/27/2024 06:28 8 9"]
+                         "05/27/2024 06:28 8 9",]
         # selected entry button from the list
         """self.btnSelected = None
         self.entrySelected = None"""
@@ -227,3 +227,30 @@ class ViewPage(customtkinter.CTkFrame):
     # search box key press event that show the matching entry buttons
     def searchbox_on_key_press(self, event):
         self.updateListDisplay(self.findEntries(self.searchbox.get()))
+    
+    # allows entries to be added directly to the logEntry array
+    def appendArray(self,input):
+        self.logEntries.append(input)
+        self.updateListUi()
+
+    
+
+#will refresh the UI once the save button is clicked from the daily log
+    def updateListUi(self):
+        for widgets in self.listFrame.winfo_children():
+            widgets.destroy()
+        self.entryBtns = []
+        count = 0
+        # Initialize the list of buttons with all available log entries
+        for entry in self.logEntries:
+            details = re.split(r" ", entry, maxsplit=3)
+            btn = customtkinter.CTkButton(self.listFrame, 
+                                          text = details[0] + " " + details[1],
+                                          corner_radius = 0,
+                                          hover_color = self.ENTRY_COLOR2)
+            count +=1
+            btn.configure(command = lambda b = btn: self.selectEntry(b))
+            print(entry+"   ")
+            print(count)
+            btn.pack(fill="x")
+            self.entryBtns.append(btn)

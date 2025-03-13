@@ -12,16 +12,19 @@ class Daily_Log(customtkinter.CTkFrame):
     #upper half of the frame    
     def upperDisplay(self):
         # will hold the current time
-        self.time_string = strftime('%H:%M:%S %p')
+        self.time_string = strftime('%H:%M')
+        self.date_string = strftime('%D')
 
         self.logDetail = customtkinter.CTkFrame(self)
 
-        self.logDetail.pack(expand=True, side="top", fill="both", padx=10, pady=10)
+        self.logDetail.pack(expand=True, side="left", fill="both", padx=10, pady=10)
         #amount of rows in the grid evenly distributed
         self.logDetail.grid_rowconfigure((0,1,2,3), weight=1)
+        self.logDetail.grid_rowconfigure((4), weight=2)
+
         #amount of columns in the grid with two different sizes
-        self.logDetail.grid_columnconfigure(0, weight=6)
-        self.logDetail.grid_columnconfigure(1, weight=4)
+        self.logDetail.grid_columnconfigure(0, weight=3)
+
 
         #label for Driving time
         self.DTLabel = customtkinter.CTkLabel(self.logDetail, text="Driving Time",font = ("arial",18),justify = "center",padx = 50,pady=10)
@@ -34,62 +37,95 @@ class Daily_Log(customtkinter.CTkFrame):
         self.RTLabel.grid(row=2, column=0,  padx=5, sticky="s")
         #Text box for resting Time
         self.RTInput = customtkinter.CTkEntry(self.logDetail,width = 250,height = 20)
+        self.RTInput.grid(row=3, column=0,  padx=2, sticky="n")
         self.RTInput.grid(row=3, column=0,  padx=2,pady = 5, sticky="n")
 
-        #Time Display
-        self.timeDetail = customtkinter.CTkLabel(self.logDetail, text = "Current Time and Date", font = ("arial",24), justify = "center",padx=50,pady = 10)
-        self.timeDetail.grid(row = 0, column = 1,padx = 10)
-
-        self.TimeLabel = customtkinter.CTkLabel(self.logDetail, text = self.time_string, font = ("arial",18), justify = "center",padx=50,pady = 10)
-        self.TimeLabel.grid(row = 1, column = 1,padx = 10)
         
 
         #save Botton and check box
-        self.saveButton = customtkinter.CTkButton(self.logDetail, text = "Save",command = self.save(),height=20,width=100)
-        self.saveButton.grid(column = 1, row =3 ,padx = 10, pady = 5, sticky = "se")
+        self.saveButton = customtkinter.CTkButton(self.logDetail, text = "Save",command = lambda:self.save(),height=20,width=100)
+        self.saveButton.grid(column = 0, row =4 ,padx = 10, pady = 5, sticky = "ns")
+  
+
+
+
         
-        self.timeCheckBox = customtkinter.CTkCheckBox(self.logDetail, width = 5,height = 5,text = "Custom Time",command= self.checked())
-        self.timeCheckBox.grid(column = 1, row =3 ,padx = (20,10), pady = 5, sticky = "sw")
-        #auto update for the time
-        self.TimeLabel.after(100,self.current_time())
+
 
     #Is the bottom half of the frame
     def lowerDisplay(self):
         self.logTime = customtkinter.CTkFrame(self)
-        self.logTime.pack(expand=True, side="bottom", fill="both", padx=10, pady=(2,10))
-        self.logTime.grid_columnconfigure((0,1,2,3), weight=1)
-        self.logTime.grid_rowconfigure((0,1),weight =2)
+        self.logTime.pack(expand=True, side="right", fill="both", padx=10, pady=(10,10))
+        self.logTime.grid_columnconfigure((0,1), weight=1)
+        self.logTime.grid_rowconfigure((0,1,2,3,4),weight =1)
+
         #Label and input for Time
         self.customTime  =customtkinter.CTkLabel(self.logTime, text= "Time",font = ("arial",20),justify = "center", padx = 30,pady = 10)
-        self.customTime.grid(row = 0,column=1,padx=10,pady=2, sticky = "nw")
+        self.customTime.grid(row = 0,column=1,padx=(2,0),pady=2, sticky = "ns")
 
         self.timeInput = customtkinter.CTkEntry(self.logTime)
-        self.timeInput.grid(row=1, column=1,  padx=2,pady = 2, sticky="nws")
+        self.timeInput.grid(row=1, column=1,  padx=(10,0),pady = (0,0), sticky="n")
+        self.current_time()#gets the time in the entry box
+        
         #Label and input for Date
         self.customDate  =customtkinter.CTkLabel(self.logTime, text= "Date",font = ("arial",20),justify = "center", padx = 55,pady = 10)
-        self.customDate.grid(row = 0,column=2,padx=10,pady=2, sticky = "ne")
+        self.customDate.grid(row = 2,column=1,padx=10,pady=(20,0), sticky = "nse")
+
 
         self.dateInput = customtkinter.CTkEntry(self.logTime)
-        self.dateInput.grid(row=1, column=2,  padx=2,pady = 2, sticky="nes")
-    # Updates the Label to automatically update every 100 milliseconds
+        self.dateInput.grid(row=3, column=1,  padx=(10,0),pady = 2, sticky="s")
+        self.current_day()#gets the date in the entrybox
+
+        #check box for a custom time
+        self.checkBox = customtkinter.CTkCheckBox(self.logTime,text  ="Custom Time",width = 10, height = 10,command =self.checked)
+        self.checkBox.grid(row = 4, column  =1, padx=10,pady=(10,0),sticky = "ns")
+
+    
+
+    # gets the time and sets the state of the entry to readonly
     def current_time(self):
-        self.TimeLabel.configure(text = self.time_string)
+        self.timeInput.insert(0, self.time_string)
+        self.timeInput.configure(state = "readonly")
+    #gets the date and sets the state of the entry to readonly      
+    def current_day(self):
+        self.dateInput.insert(0, self.date_string)
+        self.dateInput.configure(state="readonly")
             
 
 
                 
-            
-    
-    #will determine whether the check box is checked to determine whether to allow a custom time input
+
+                
+    #will check if the box is checked so it can allow the user to edit the text boxs for time and date
     def checked(self):
-        print("Checked")
+        if self.checkBox.cget("state") == "disabled":
+            self.timeInput.configure(state = "disabled")
+            self.dateInput.configure(state = "disabled")
+        else:
+            self.dateInput.configure(state = "normal")
+            self.timeInput.configure(state = "normal")
 
     #will save the information into the viewpage array
     def save(self):
-        size = len(viewpage.ViewPage(self).logEntries)    
-        print(size)     
+        viewpage.ViewPage(self).appendArray("05/27/2021 05:28 9 8")
+        self.deleteInputs()
+    #deletes the data from the input boxes whether it is in a disabled and a enabled mode    
+    def deleteInputs(self):
+        if self.timeInput.cget("state") == "readonly":
+            self.timeInput.configure(state="normal")
+            self.dateInput.configure(state="normal")
+            self.timeInput.delete(0,customtkinter.END)
+            self.dateInput.delete(0,customtkinter.END)
+            self.timeInput.configure(state="readonly")
+            self.dateInput.configure(state="readonly")
+            self.DTInput.delete(0,customtkinter.END)
+            self.RTInput.delete(0,customtkinter.END)
+        else:
 
-
+            self.timeInput.delete(0,customtkinter.END)
+            self.dateInput.delete(0,customtkinter.END)
+            self.DTInput.delete(0,customtkinter.END)
+            self.RTInput.delete(0,customtkinter.END)
 
 
 
