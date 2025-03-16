@@ -1,11 +1,22 @@
 import customtkinter
 from time import strftime
 import tkinter
-import viewpage
+import sqlite3
+
 class Daily_Log(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, filename):
 
         super().__init__(master)
+
+        # setup control of the sql database file, 
+        # assume the table logs(datetime, drivetime, resttime) always exists
+        try:
+            self.con = sqlite3.connect(filename)
+            self.cur = self.con.cursor()
+        except:
+            print("sql file connection failed: " + filename)
+            return
+
         self.upperDisplay()
         self.lowerDisplay()
 
@@ -84,10 +95,11 @@ class Daily_Log(customtkinter.CTkFrame):
     def checked(self):
         print("Checked")
 
-    #will save the information into the viewpage array
+    #will save the information into the database
     def save(self):
-        size = len(viewpage.ViewPage(self).logEntries)    
-        print(size)     
+        print("daily_log: current entries stored \n  ")
+        print(self.cur.execute("SELECT datetime FROM logs").fetchall())
+        print()  
 
 
 
