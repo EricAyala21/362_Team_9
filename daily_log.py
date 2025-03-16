@@ -1,11 +1,22 @@
 import customtkinter
 from time import strftime
 import tkinter
-import viewpage
+import sqlite3
+
 class Daily_Log(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, filename):
 
         super().__init__(master)
+
+        # setup control of the sql database file, 
+        # assume the table logs(datetime, drivetime, resttime) always exists
+        try:
+            self.con = sqlite3.connect(filename)
+            self.cur = self.con.cursor()
+        except:
+            print("sql file connection failed: " + filename)
+            return
+
         self.upperDisplay()
         self.lowerDisplay()
 
@@ -107,7 +118,10 @@ class Daily_Log(customtkinter.CTkFrame):
 
     #will save the information into the viewpage array
     def save(self):
-        viewpage.ViewPage(self).appendArray("05/27/2021 05:28 9 8")
+        self.cur.execute("INSERT OR IGNORE INTO logs VALUES (?, ?, ?)", ["05/27/2021 05:28", 9, 8])
+        self.con.commit()
+        print("entry list after save: ", end='')
+        print(self.cur.execute("SELECT datetime FROM logs").fetchall())
         self.deleteInputs()
     #deletes the data from the input boxes whether it is in a disabled and a enabled mode    
     def deleteInputs(self):
@@ -125,7 +139,9 @@ class Daily_Log(customtkinter.CTkFrame):
             self.timeInput.delete(0,customtkinter.END)
             self.dateInput.delete(0,customtkinter.END)
             self.DTInput.delete(0,customtkinter.END)
-            self.RTInput.delete(0,customtkinter.END)
+            self.RTInput.delete(0,customtkinter.END)  
+
+
 
 
 
