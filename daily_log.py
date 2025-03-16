@@ -116,10 +116,30 @@ class Daily_Log(customtkinter.CTkFrame):
             self.dateInput.configure(state = "normal")
             self.timeInput.configure(state = "normal")
 
-    #will save the information into the database
+    #will save the information into the viewpage array
     def save(self):
-        size = len(viewpage.ViewPage(self).logEntries)    
-        print(size)     
+        self.cur.execute("INSERT OR IGNORE INTO logs VALUES (?, ?, ?)", ["05/27/2021 05:28", 9, 8])
+        self.con.commit()
+        print("entry list after save: ", end='')
+        print(self.cur.execute("SELECT datetime FROM logs").fetchall())
+        self.deleteInputs()
+    #deletes the data from the input boxes whether it is in a disabled and a enabled mode    
+    def deleteInputs(self):
+        if self.timeInput.cget("state") == "readonly":
+            self.timeInput.configure(state="normal")
+            self.dateInput.configure(state="normal")
+            self.timeInput.delete(0,customtkinter.END)
+            self.dateInput.delete(0,customtkinter.END)
+            self.timeInput.configure(state="readonly")
+            self.dateInput.configure(state="readonly")
+            self.DTInput.delete(0,customtkinter.END)
+            self.RTInput.delete(0,customtkinter.END)
+        else:
+
+            self.timeInput.delete(0,customtkinter.END)
+            self.dateInput.delete(0,customtkinter.END)
+            self.DTInput.delete(0,customtkinter.END)
+            self.RTInput.delete(0,customtkinter.END)  
 
 
 
