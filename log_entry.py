@@ -87,13 +87,13 @@ class LogEntry:
         return self.get_timestamp_str()
     
     "Static Methods"
-    def to_str(self, timestamp : dt.datetime):
+    def to_str(timestamp : dt.datetime):
         """
         Return a string representation of the timestamp in the format defined by LogEntry
         """
         return timestamp.strftime(LogEntry.FORMAT_STR)
     
-    def create_timestamp(self, timestamp_str : str):
+    def create_timestamp(timestamp_str : str):
         """
         Use the string to create a datetime object according to LogEntry's format.
         default FORMAT_STR = "%m/%d/%Y %H:%M".
