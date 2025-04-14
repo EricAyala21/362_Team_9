@@ -157,4 +157,3 @@ class SqlManager:
 # print(manager.get_entry(e1.timestamp))
 # manager.cur.execute("DROP TABLE logs")
 # manager.con.commit()
-
