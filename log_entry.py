@@ -70,6 +70,7 @@ class LogEntry:
         """
         self.timestamp = LogEntry.create_timestamp(timestamp_str)
     
+    
     "Overload operators"
     def __lt__(self, b):
         return self.get_timestamp_str() < b.get_timestamp_str()
@@ -100,5 +101,12 @@ class LogEntry:
         """
         return dt.datetime.strptime(timestamp_str.strip(), LogEntry.FORMAT_STR)
     
+    def from_date_and_time(date : dt.date, time_str : str):
+        hour_min = time_str.strip().split(":")
+        time = dt.time(int(hour_min[0]), int(hour_min[1]))
+        return dt.datetime.combine(date, time)
+    
 # e = LogEntry(dt.datetime.now(), 10, 12)
 # print(e)
+# date = dt.date(2024,12,31)
+# print(LogEntry.from_date_and_time(date, "12:53"))
