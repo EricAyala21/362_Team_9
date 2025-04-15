@@ -28,16 +28,16 @@ class file_manage:
     def setup_data(self):
         #TODO look through available data file / ask user for file input
         # temporary database for test and development purpose
-        self.file_Names = ["temp.db"]
+        self.file_Names = ["temp.db", "test.db"]
         self.con = sqlite3.connect(self.file_Names[0])
         self.cur = self.con.cursor()
         # create a table named logs if not exists. datetime set to primary key for fast lookup
         self.cur.execute(f"""CREATE TABLE IF NOT EXISTS logs(
-                         datetime TEXT PRIMARY KEY, 
+                         timestamp TEXT PRIMARY KEY, 
                          drivetime FLOAT, 
                          resttime FLOAT)""")
         # create an index for logs based on the datetime to enhance sorting
-        self.cur.execute("CREATE INDEX IF NOT EXISTS idx_datetime ON logs(datetime)")
+        self.cur.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON logs(timestamp)")
 
         # starting entries for test only
         # store the entries data we have
@@ -127,7 +127,7 @@ class file_manage:
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
 
-        page = viewpage.ViewPage(self.frame, self.file_Names[0]) # TODO currently open view page with the first file, maybe can change to the selected file?
+        page = viewpage.ViewPage(self.frame, self.file_Names[1]) # TODO maybe can change to the selected file?
         page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
 
 

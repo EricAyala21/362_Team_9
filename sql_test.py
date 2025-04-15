@@ -41,8 +41,8 @@ for i in range(100):
                 , random.randint(1,31)
                 , random.randint(0,23)
                 , random.randint(0,59))
-                , random.uniform(0,24)
-                , random.uniform(0,24))
+                , round(random.uniform(0,24),2)
+                , round(random.uniform(0,24),2))
         set3.append(e)
     except:
         pass
@@ -66,3 +66,7 @@ manager = SM("test.db")
 
 for e in data_sets[choice-1]:
     manager.add_entry(e)
+
+current_content = manager.get_timestamps()
+for timestamp in current_content:
+    print(timestamp)
