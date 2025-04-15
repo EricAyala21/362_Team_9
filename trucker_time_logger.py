@@ -5,6 +5,7 @@ from tkinter import filedialog
 import daily_log
 import viewpage
 import sqlite3
+import Analytics
 
 
 
@@ -161,7 +162,8 @@ class file_manage:
                                           fg_color = "#d7c5db",
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
-
+        page = Analytics.AnalyticsPage(self.frame, self.file_Names[1]) # TODO maybe can change to the selected file?
+        page.grid(row=3, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
 
     def DailyLog(self):
         self.clearWindow()
