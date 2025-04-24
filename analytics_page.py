@@ -35,7 +35,7 @@ class AnalyticsPage(customtkinter.CTkFrame):
         placeholder_label = customtkinter.CTkLabel(self.dateFrame, text="Date Picker (coming soon)")
         placeholder_label.grid(row=0, column=0, padx=10, pady=5)
         
-        # If you want to add the end date as well, you can use another placeholder
+        # Can add the end date as well, you can use another placeholder
         placeholder_label_end = customtkinter.CTkLabel(self.dateFrame, text="End Date Picker (coming soon)")
         placeholder_label_end.grid(row=0, column=1, padx=10, pady=5)
 
