@@ -10,7 +10,6 @@ class CustomDateEntry (ctk.CTkFrame):
 
     def __init__(self, master, **args):
         super().__init__(master, **args)
-        self.is_empty = True
 
         self.cur_font = ctk.CTkLabel(self).cget("font")
         self.SIZE = self.cur_font.cget("size")
@@ -35,7 +34,6 @@ class CustomDateEntry (ctk.CTkFrame):
     def get_date(self):
         if(not self.date_entry.get().strip()):
             return None
-        self.date_entry._date = self.date_entry.get_date()
         result = self.date_entry.get_date()
         self.set_date(result)
         return result
