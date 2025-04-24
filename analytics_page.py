@@ -2,7 +2,11 @@ import customtkinter
 import sqlite3
 import tkinter
 from tkcalendar import Calendar 
-# from ctk_date_picker import CTkDatePicker  # Comment this out temporarily
+
+# from ctk_date_picker import CTkDatePicker  # Temporarily removed
+# Placeholder for CTkDatePicker (not available yet)
+placeholder_label = customtkinter.CTkLabel(self.date_frame, text="Date Picker (coming soon)")
+placeholder_label.grid(row=0, column=0, padx=10, pady=5)
 
 class AnalyticsPage(customtkinter.CTkFrame):
     def __init__(self, master, filename):
