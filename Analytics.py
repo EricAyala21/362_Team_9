@@ -5,8 +5,11 @@ from tkcalendar import Calendar
 
 # from ctk_date_picker import CTkDatePicker  # Temporarily removed
 # Placeholder for CTkDatePicker (not available yet)
+
 #placeholder_label = customtkinter.CTkLabel(self.date_frame, text="Date Picker (coming soon)")
 #placeholder_label.grid(row=0, column=0, padx=10, pady=5)
+placeholder_label = customtkinter.CTkLabel(self.date_frame, text="Date Picker (coming soon)")
+placeholder_label.grid(row=0, column=0, padx=10, pady=5)
 
 class AnalyticsPage(customtkinter.CTkFrame):
     def __init__(self, master, filename):
@@ -51,4 +54,8 @@ class AnalyticsPage(customtkinter.CTkFrame):
         self.drivingTime.grid(row=1, column=10, padx=10, pady=20, sticky="news")
 
         self.restingTime = customtkinter.CTkCheckBox(self.legendFrame, text="Resting Time", width=10, height=10)
+
         self.restingTime.grid(row=2, column=10, padx=10, pady=10, sticky="news")
+
+        self.restingTime.grid(row=2, column=10, padx=10, pady=10, sticky="news")
+
