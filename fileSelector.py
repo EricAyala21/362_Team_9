@@ -15,7 +15,7 @@ class Users(customtkinter.CTkFrame):
     def leftFrame(self):
       
 
-        self.button = customtkinter.CTkButton(self,text = "Click Me!",command = self.inputFunction)
+        self.button = customtkinter.CTkButton(self,text = "Addd User",command = self.inputFunction)
         self.button.grid(row  = 1, column = 2,padx = 5,pady=10,  sticky = "ew")
 
 
@@ -205,7 +205,6 @@ class Users(customtkinter.CTkFrame):
 
         self.reorderButtons()       
         #print(usersFiles)
-   
    
     def reorderButtons(self):
         for widget in self.list_frame.winfo_children():

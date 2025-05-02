@@ -1,6 +1,5 @@
 import customtkinter
 from time import strftime
-import tkinter
 import sqlite3
 import custom_methods
 
