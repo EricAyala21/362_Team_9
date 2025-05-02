@@ -8,8 +8,7 @@ from tkcalendar import Calendar
 
 #placeholder_label = customtkinter.CTkLabel(self.date_frame, text="Date Picker (coming soon)")
 #placeholder_label.grid(row=0, column=0, padx=10, pady=5)
-placeholder_label = customtkinter.CTkLabel(self.date_frame, text="Date Picker (coming soon)")
-placeholder_label.grid(row=0, column=0, padx=10, pady=5)
+
 
 class AnalyticsPage(customtkinter.CTkFrame):
     def __init__(self, master, filename):
