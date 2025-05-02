@@ -20,23 +20,12 @@ class file_manage:
         self.setup_gui()
 
 
-
-
-
     def setup_gui(self):
         self.page = fileSelector.Users(master = root)
         self.page.pack(pady = 20, padx= 60,fill = "both", expand = True )
         self.page.grid_columnconfigure((0,1,2),weight = 1)
         self.page.grid_rowconfigure(1,weight = 1)
-        self.page.grid_rowconfigure(2,weight = 6)
-        
-
-        
-
-    
-
-
-            
+        self.page.grid_rowconfigure(2,weight = 6)          
 root = customtkinter.CTk()
 app = file_manage(root)
 root.mainloop()

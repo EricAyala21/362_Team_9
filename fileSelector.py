@@ -190,8 +190,6 @@ class Users(customtkinter.CTkFrame):
         self.con.commit()
    
     def setup_Files(self):
-        
-
         self.connect = sqlite3.connect("UserFiles.db")
         self.cursor = self.connect.cursor()
         self.cursor.execute(f"""CREATE TABLE IF NOT EXISTS users_files(
@@ -205,8 +203,7 @@ class Users(customtkinter.CTkFrame):
         self.file_Names.append(usersFiles)
         print(self.file_Names)
 
-        self.reorderButtons()       #self.cursor.execute("INSERT OR IGNORE INTO users_files VALUES(?)",(usersFiles))
-
+        self.reorderButtons()       
         #print(usersFiles)
    
    
@@ -216,5 +213,5 @@ class Users(customtkinter.CTkFrame):
         n = 0
         for entry in self.file_Names:
             btn = self.create_entry_button(entry.replace(".db",""))
-            btn.grid(row = n, column = 0, sticky = "ew")
+            btn.grid(row = n, column = 0,padx=40, sticky = "ew")
             n += 1

@@ -145,7 +145,6 @@ class Daily_Log(customtkinter.CTkFrame):
             self.errorDrive.geometry("250x40")
     
 
-
     def checkRInput(self):
         self.RData = self.RTInput.get()
         if custom_methods.checkTimeInputs(self.RData) == True:
@@ -171,9 +170,6 @@ class Daily_Log(customtkinter.CTkFrame):
 
     #will save the information into the viewpage array
     def save(self):
-        
-
-        
 
         if self.checkDates() and self.checkDInput() and self.checkRInput() and self.checkTimes():
             self.timestamp = self.DInput + " "+ self.TInput
