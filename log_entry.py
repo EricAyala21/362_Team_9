@@ -37,10 +37,13 @@ class LogEntry:
 
     "Instance Methods"
     def get_timestamp(self):
+        """get the datetime.datetime object attribute"""
         return self.timestamp
     def get_drivetime(self):
+        """get the drivetime attribute value in floate"""
         return self.drivetime
     def get_resttime(self):
+        """get the restime attribute value in floate"""
         return self.resttime
     
     def get_time_str(self):
@@ -101,7 +104,9 @@ class LogEntry:
         """
         return dt.datetime.strptime(timestamp_str.strip(), LogEntry.FORMAT_STR)
     
-    def from_date_and_time(date : dt.date, time_str : str):
+    def from_date_and_time(date : dt.date, time_str="00:00"):
+        """Return a log entry object by combining date (datetime.date or datetime.datetime instance) 
+        and the a string time_str representing the time (default to "00:00")"""
         hour_min = time_str.strip().split(":")
         time = dt.time(int(hour_min[0]), int(hour_min[1]))
         return dt.datetime.combine(date, time)
