@@ -15,7 +15,7 @@ class Users(customtkinter.CTkFrame):
     def leftFrame(self):
       
 
-        self.button = customtkinter.CTkButton(self,text = "Addd User",command = self.inputFunction)
+        self.button = customtkinter.CTkButton(self,text = "Add User",command = self.inputFunction)
         self.button.grid(row  = 1, column = 2,padx = 5,pady=10,  sticky = "ew")
 
 

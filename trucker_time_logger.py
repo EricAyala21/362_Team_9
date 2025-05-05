@@ -6,7 +6,7 @@ import fileSelector
 class file_manage:
     def __init__(self, root):
         self.root = root
-        self.root.geometry("650x350")
+        self.root.geometry("850x450")
         self.root.minsize(630, 300) 
         customtkinter.set_appearance_mode("light")
         customtkinter.set_default_color_theme("blue")
