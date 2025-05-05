@@ -3,6 +3,7 @@ import datetime as dt
 from custom_date_entry import CustomDateEntry
 from log_entry import LogEntry
 from sql_manager import SqlManager
+from custom_window import SelectionWindow
 
 class ViewPage(customtkinter.CTkFrame):
     ENTRY_COLOR = "#3B8ED0"
@@ -197,14 +198,19 @@ class ViewPage(customtkinter.CTkFrame):
         try:
             new_entry.timestamp = LogEntry.from_date_and_time(self.date_input.get_date()
                                                               , self.time_input.get().strip())
-        except ValueError:#TODO Invalid time or date, error message or popup error window for invalid
+        except ValueError:
+            self.pop_msg("Invalid date or time."
+                         +"\nDate format mm/dd/yyyy."
+                         +"\nTime uses the 24 hour format HH:MM.")
             self.display_entry()
             return
         
-        # the user changed the timestamp and currently contains a different entry with the same date&time
+        #error message for trying to generate duplicate entry with the same date&time
         if(new_entry.timestamp != old_timestamp 
            and self.find_index(LogEntry.to_str(new_entry.timestamp)) != -1):
-            #TODO error message for trying to generate duplicate entry with the same date&time
+            self.pop_msg("Entry with the same date & time already exist!"
+                         +"\nChange cancelled.")
+            self.display_entry()
             return
         
         # convert drive time and rest time input to floats
@@ -217,10 +223,32 @@ class ViewPage(customtkinter.CTkFrame):
                 new_entry.resttime = float(rt_str)
         except:
             #TODO error message or popup error window for invalid
+            self.pop_msg("Drive time and Rest time error. Decimal numbers only.")
+            return
+        
+        old_entry = self.sqlManager.get_entry(old_timestamp)
+        #No change is made
+        if(new_entry.timestamp == old_entry.timestamp
+           and new_entry.drivetime == old_entry.drivetime
+           and new_entry.resttime == old_entry.resttime):
+            self.pop_msg("No Change Made.")
+            return
+
+        #Get user confirmation
+        msg_list = [
+            ["Update to the new entry?"]
+            , ["", "Old", "New"]
+            , ["Date & Time:", str(LogEntry.to_str(old_timestamp))
+               , str(LogEntry.to_str(new_entry.timestamp))]
+            , ["Drive Time:", str(old_entry.drivetime), str(new_entry.drivetime)]
+            , ["Rest Time:", str(old_entry.resttime), str(new_entry.resttime)]
+        ]
+        if(not self.get_action_confirm(msg_list)):
+            self.pop_msg("Update Cancelled.")
             return
         
         # save the change made to self.last_change and show the undo button
-        self.last_change = [self.sqlManager.get_entry(old_timestamp), new_entry.timestamp]
+        self.last_change = [old_entry, new_entry.timestamp]
         self.show_undo_btn()
 
         # update the new entry information in sql file
@@ -245,10 +273,21 @@ class ViewPage(customtkinter.CTkFrame):
         if(self.selected_index == -1): # if nothing selected
             return
         print("delete button clicked for entry " + str(self.selected_index))
-        #TODO popup window to confirm delete, set cofirmed[0] to true if user confirmed deletion
-        confirmed = [True]
-        if confirmed[0] == False:
+        self.display_entry()
+
+        #popup window to confirm delete
+        msg_list = [
+                     ["Delete the following entry?"]
+                     , ["Date:", str(LogEntry.to_str(self.date_input.get_date())).split()[0]]
+                     , ["Time:", self.time_input.get()]
+                     , ["Drive Time:", self.drive_time_input.get()]
+                     , ["Rest Time:", self.rest_time_input.get()]
+                ]
+        if(not self.get_action_confirm(msg_list=msg_list)):
+            # Notify the user the deletion is cancelled
+            self.pop_msg("Delete Cancelled")
             return
+
         
         # delete it from database file and store the deleted entry
         self.last_change = [self.sqlManager.delete_entry(self.log_entries[self.selected_index][0])]
@@ -259,6 +298,7 @@ class ViewPage(customtkinter.CTkFrame):
         self.selected_index = -1
         self.remove_detail()
 
+        self.pop_msg("Entry Removed")
         print("delete button clicked, # of entry after delete: " + str(len(self.log_entries)))
         print("  deleted content: ", end = "")
         print(self.last_change)
@@ -342,16 +382,47 @@ class ViewPage(customtkinter.CTkFrame):
 
         # the last change made is a delete
         if (len(self.last_change) == 1):
+            #popup window to confirm the change
+            msg_list = [
+                ["Restore the following entry?" ]
+                , ["Date & time:", str(LogEntry.to_str(self.last_change[0].timestamp))]
+                , ["Drive time:", str(self.last_change[0].drivetime)]
+                , ["Rest time:", str(self.last_change[0].resttime)]
+            ]
+            print("Undo button: confirm to undo last delete.")
+            if(not self.get_action_confirm(msg_list=msg_list)):
+                self.pop_msg("Undo Cancelled.")
+                return # do nothing if the action is cancelled
             btn = self.create_entry_button(LogEntry.to_str(self.last_change[0].timestamp))
             btn.grid(row = len(self.log_entries), column=0, sticky="ew")
             self.log_entries.append([self.last_change[0].timestamp, btn])
             self.sqlManager.add_entry(self.last_change[0])
             self.reorder_entries(len(self.log_entries) - 1)
             self.update_list_display(self.get_date_range())
+
         # the last change made is a modification
         elif (len(self.last_change) == 2):
-            self.sqlManager.update_entry(timestamp=self.last_change[1], entry=self.last_change[0])
+            # find and display the entry that we are going to make change
             idx = self.find_index(LogEntry.to_str(self.last_change[1]))
+            self.deselect_current_entry()
+            self.select_entry(idx)
+            # popup window to compare and confirm the change
+            msg_list = [
+                ["Restore the following entry to before its last update?"]
+                , ["","Entry","Previous"]
+                , ["Date & Time:", str(self.log_entries[idx][1].cget("text"))
+                   , str(self.last_change[0].get_timestamp_str())]
+                , ["Drive time:", str(self.drive_time_input.get())
+                   , str(self.last_change[0].get_drivetime())]
+                , ["Rest time:", str(self.rest_time_input.get())
+                   , str(self.last_change[0].get_resttime())]
+            ]
+            print("Undo button: store from previous update")
+            if(not self.get_action_confirm(msg_list)):
+                self.pop_msg("Undo Cancelled.")
+                return # action cancelled
+            # Made the change in UI and database
+            self.sqlManager.update_entry(timestamp=self.last_change[1], entry=self.last_change[0])
             self.log_entries[idx][0] = self.last_change[0].timestamp
             self.log_entries[idx][1].configure(text = LogEntry.to_str(self.log_entries[idx][0]))
             self.reorder_entries(idx)
@@ -369,4 +440,44 @@ class ViewPage(customtkinter.CTkFrame):
         self.deselect_current_entry()
         self.remove_detail()
         self.selected_index = -1
+
+    def pop_msg(self, msg : str):
+        """Pop up window to show a message"""
+        popup = SelectionWindow(title = "Message", options=["Done"], var=customtkinter.StringVar())
+        popup.geometry("300x100")
+        popup.set_content([[msg]],[1])
+        popup.grab_set()
+        self.wait_window(popup)
+
+    def get_action_confirm(self, msg_list : list[list[str]]):
+        """generate a popup window with equally-spaced button of options to select.
+        msg_list is a 2D list of string that each string will be organized in row and column 
+        in the popup window. If the first row is a list of single string, that single string 
+        will occupies the whole row.
+        Return True if the yes button is clicked, 
+        False if thescancel button is clicked or no selection is made."""
+        confirmation = customtkinter.StringVar()
+        confirmation.set("Cancel")
+        popup = None
+        #construct the column weight list needed for msg_list
+        columns = []
+        for row in msg_list:
+            while len(columns) < len(row):
+                columns.append(1)
+        #popup window until a selection is made by the user
+        header = None
+        if(len(msg_list[0]) == 1):
+            header = msg_list[0][0]
+            msg_list = msg_list[1:]
+        if(popup == None or not popup.winfo_exists()):
+            popup = SelectionWindow(title="Acition Confirm"
+                                    , options = ["Yes", "Cancel"]
+                                    , var = confirmation)
+            popup.set_content(msg_list, columns, header)
+            popup.grab_set()
+            self.wait_window(popup)
+        else:
+            popup.focus()
+        print("Confirmation: " + confirmation.get())
+        return confirmation.get() == "Yes"
         

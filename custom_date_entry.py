@@ -65,7 +65,7 @@ class CustomDateEntry (ctk.CTkFrame):
         else:
             if(len(self.date_entry.get_date()) == 0):
                 return None
-            return dt.datetime.strptime(self.date_entry.get_date(), self.CTK_DATE_FORMAT)
+            return dt.datetime.strptime(self.date_entry.get_date(), self.CTK_DATE_FORMAT).date()
             
     
     def set_date(self, date : dt.datetime):
