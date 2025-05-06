@@ -6,12 +6,12 @@ from sql_manager import SqlManager
 from custom_window import SelectionWindow
 
 class ViewPage(customtkinter.CTkFrame):
-    ENTRY_COLOR = "#515151"
-    ENTRY_COLOR2 = "#212121"
-    ENTRY_HOVER_COLOR = "#273366"
-    DELETE_BTN_COLOR = "gray"
-    DELETE_BTN_HOVER_COLOR = "red"
-    DELETE_BTN_TEXT_COLOR = "white"
+    ENTRY_COLOR = ["#eaeaea","#3a3a3a"]
+    ENTRY_COLOR2 = ["#aeaeae","#111111"]
+    ENTRY_HOVER_COLOR = ["#91c1f5","#273366"]
+    DELETE_BTN_COLOR = "transparent"
+    DELETE_BTN_HOVER_COLOR = "black"
+    DELETE_BTN_TEXT_COLOR = "#b20000"
     TRANSPARENT = "transparent"
 
     def __init__(self, master, sql_filename):
@@ -41,7 +41,6 @@ class ViewPage(customtkinter.CTkFrame):
 
         self.init_detail_display() # initiate elements on the right side of the page
         self.init_list_display() # initiate elements on the left side of the page
-        self.update()
     
     # right side of the view page will show the detail of the selected log entry and provide the ability to edit it
     def init_detail_display(self):
@@ -86,9 +85,9 @@ class ViewPage(customtkinter.CTkFrame):
                                                 height=14, 
                                                 command=self.undo_button_click,
                                                 text="undo", 
-                                                text_color="white", 
+                                                text_color="black", 
                                                 fg_color=self.TRANSPARENT, 
-                                                hover_color="#555555")
+                                                hover_color="#ffffff")
 
         self.delete_btn = customtkinter.CTkButton(self.detail_frame, 
                                                 width=40, 
@@ -141,6 +140,7 @@ class ViewPage(customtkinter.CTkFrame):
         """ create a new entry in the entry list UI """
         btn = customtkinter.CTkButton(self.list_frame, 
                                       text = entry_datetime,
+                                      text_color= "black",
                                       corner_radius = 0,
                                       fg_color = self.ENTRY_COLOR,
                                       hover_color = self.ENTRY_HOVER_COLOR)      
@@ -453,6 +453,7 @@ class ViewPage(customtkinter.CTkFrame):
         popup = SelectionWindow(title = "Message", options=["Done"], var=customtkinter.StringVar())
         popup.geometry("300x100")
         popup.set_content([[msg]],[1])
+        popup.focus()
         popup.grab_set()
         self.wait_window(popup)
 
