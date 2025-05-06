@@ -6,8 +6,9 @@ from sql_manager import SqlManager
 from custom_window import SelectionWindow
 
 class ViewPage(customtkinter.CTkFrame):
-    ENTRY_COLOR = "#3B8ED0"
-    ENTRY_COLOR2 = "#273366"
+    ENTRY_COLOR = "#515151"
+    ENTRY_COLOR2 = "#212121"
+    ENTRY_HOVER_COLOR = "#273366"
     DELETE_BTN_COLOR = "gray"
     DELETE_BTN_HOVER_COLOR = "red"
     DELETE_BTN_TEXT_COLOR = "white"
@@ -23,7 +24,8 @@ class ViewPage(customtkinter.CTkFrame):
         self.sqlManager = None
         try: 
             self.sqlManager = SqlManager(sql_filename)
-        except: # TODO open sql file failed
+        except: # open sql file failed
+            self.pop_msg("ViewPage: Sql db file open failed.")
             print("Sql file open failed")
             return
         
@@ -39,6 +41,7 @@ class ViewPage(customtkinter.CTkFrame):
 
         self.init_detail_display() # initiate elements on the right side of the page
         self.init_list_display() # initiate elements on the left side of the page
+        self.update()
     
     # right side of the view page will show the detail of the selected log entry and provide the ability to edit it
     def init_detail_display(self):
@@ -139,13 +142,15 @@ class ViewPage(customtkinter.CTkFrame):
         btn = customtkinter.CTkButton(self.list_frame, 
                                       text = entry_datetime,
                                       corner_radius = 0,
-                                      hover_color = self.ENTRY_COLOR2)      
+                                      fg_color = self.ENTRY_COLOR,
+                                      hover_color = self.ENTRY_HOVER_COLOR)      
         btn.configure(command = (lambda b = btn: self.entry_button_clicked(b)))
         return btn
 
     
     def update_list_display(self, date_range : tuple[dt.datetime]):
-        """ Show entry buttons that has a date at or after begin_date and also at or before the end_date"""
+        """ Show entry buttons that has a date at or after begin_date and also at or before the end_date,
+        from future date to down to current date."""
         n = 0
         begin_date = date_range[0]
         end_date = date_range[1]
@@ -163,10 +168,10 @@ class ViewPage(customtkinter.CTkFrame):
         """ 
         Maintain the descending order of the log_entries when there is a change at index idx.
         Meanwhile, update selected_index and detail display to be the entry of the selected_indx
-        """
+        """      
+        self.update()  
         # change the color of currently selected entry (if any)
         self.deselect_current_entry()
-
         # swapping toward the front
         while(idx > 0 and self.log_entries[idx][0] > self.log_entries[idx-1][0]):
             temp = self.log_entries[idx]
@@ -184,6 +189,7 @@ class ViewPage(customtkinter.CTkFrame):
         self.update_list_display(self.get_date_range())
         # select the newly ordered entry
         self.select_entry(idx)
+        
 
     
     def update_button_click(self):
@@ -198,7 +204,7 @@ class ViewPage(customtkinter.CTkFrame):
         try:
             new_entry.timestamp = LogEntry.from_date_and_time(self.date_input.get_date()
                                                               , self.time_input.get().strip())
-        except ValueError:
+        except:
             self.pop_msg("Invalid date or time."
                          +"\nDate format mm/dd/yyyy."
                          +"\nTime uses the 24 hour format HH:MM.")
@@ -224,6 +230,7 @@ class ViewPage(customtkinter.CTkFrame):
         except:
             #TODO error message or popup error window for invalid
             self.pop_msg("Drive time and Rest time error. Decimal numbers only.")
+            self.display_entry()
             return
         
         old_entry = self.sqlManager.get_entry(old_timestamp)
