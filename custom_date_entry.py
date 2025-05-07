@@ -16,7 +16,8 @@ class CustomDateEntry (ctk.CTkFrame):
         super().__init__(master, **args)
 
         self.is_win = sys.platform.startswith("win")
-
+        self.configure(fg_color = "transparent")
+        self.columnconfigure(0, weight = 1)
         # convert the current font from customtkinter to the Font in tkinter
         self.cur_font = ctk.CTkLabel(self).cget("font")
         self.SIZE = self.cur_font.cget("size")
@@ -25,22 +26,30 @@ class CustomDateEntry (ctk.CTkFrame):
         self.tk_font = tk.font.Font(family = self.FAMILY, size = self.SIZE, weight = self.WEIGHT)
         # declare the name for the date entry box
         self.date_entry = None
+        self.previous = None
+        self.dummy = ctk.CTkEntry(self)
+        self.dummy.grid(row = 0, column = 0, sticky="nswe", padx = (0, 5))
         self.clear()
     
     def create_date_entry(self):
         """generate a new date entry box, if exists already, will delete it before create new box."""
-        if self.date_entry != None:
-            self.date_entry.destroy()
-
         if self.is_win:
+            if self.date_entry != None and self.date_entry._top_cal.winfo_exists():
+                self.date_entry.pack_forget()
+                if(self.previous is not None and self.previous.winfo_exists()):
+                    self.previous.destroy()
+                self.previous = self.date_entry
             self.date_entry = tkcalendar.DateEntry(self, font = self.tk_font
                                                     , corner_radius = 6
                                                     , foreground = "white"
                                                     , background = self.HOVER_COLOR
                                                     , selectbackground = self.BUTTON_COLOR
-                                                    , weekendbackground = self.WEEKEND_COLOR)
+                                                    , weekendbackground = self.WEEKEND_COLOR
+                                                    , height = 28)
             self.date_entry.bind("<<DateEntrySelected>>", self.refresh)
         else:
+            if self.date_entry != None:
+                self.date_entry.destroy()
             self.date_entry = CTkDatePicker(self)
             self.date_entry.set_allow_manual_input(True)
             self.date_entry.set_allow_change_month(True)
@@ -50,7 +59,7 @@ class CustomDateEntry (ctk.CTkFrame):
             self.date_entry.date_entry.grid(row=0, column=0, sticky="ew", padx=0, pady=0)
             self.date_entry.calendar_button.grid_forget()
             self.date_entry.calendar_button.grid(row=0, column=1, sticky="ew", padx=0, pady=0)
-        self.date_entry.pack(fill="both")
+        self.date_entry.grid(row = 0, column = 0, sticky="nswe", padx = (0, 5))
 
 
     def get_date(self):
