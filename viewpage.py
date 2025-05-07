@@ -49,6 +49,13 @@ class ViewPage(customtkinter.CTkFrame):
         self.detail_frame.grid_rowconfigure((0,2), weight=1)
         self.detail_frame.grid_rowconfigure((1,3,4), weight=2)
         self.detail_frame.grid_columnconfigure((0,1,2,3), weight=1)
+        #a loading display that cover the detail area to prevent modification while changing content
+        self.detail_cover = customtkinter.CTkFrame(self) 
+        self.detail_cover.grid(row = 0, rowspan = 4, column = 2, sticky = "nswe", padx=(0,10), pady=10)
+        self.detail_cover.grid_remove()
+        loading_label = customtkinter.CTkLabel(self.detail_cover, text = "Loading...")
+        loading_label.pack(expand = True, fill = "both")
+
 
         self.drive_time_label = customtkinter.CTkLabel(self.detail_frame, text="Driving Time")
         self.drive_time_label.grid(row=0, column=0, columnspan=2, padx=5, sticky="sw")
@@ -126,6 +133,11 @@ class ViewPage(customtkinter.CTkFrame):
         self.list_frame = customtkinter.CTkScrollableFrame(self)
         self.list_frame.grid(row = 3, column = 0, columnspan = 2, padx=10, pady=(0,10), sticky = "nswe")
         self.list_frame.columnconfigure(0, weight=1)
+        self.list_cover = customtkinter.CTkFrame(self)
+        self.list_cover.grid(row = 3, column = 0, columnspan = 2, padx=10, pady=(0,10), sticky = "nswe")
+        self.list_cover.grid_remove()
+        loading_label = customtkinter.CTkLabel(self.list_cover, text = "Loading...")
+        loading_label.pack(expand = True, fill = "both")
 
         # Initialize the list of buttons with all available log entries, the button will be stored in log_entries[1]
         n = 0
@@ -134,7 +146,7 @@ class ViewPage(customtkinter.CTkFrame):
             btn.grid(row=n, column = 0, sticky = "ew")
             entry.append(btn)
             n += 1
-
+        
     
     def create_entry_button(self, entry_datetime: str):
         """ create a new entry in the entry list UI """
@@ -147,7 +159,19 @@ class ViewPage(customtkinter.CTkFrame):
         btn.configure(command = (lambda b = btn: self.entry_button_clicked(b)))
         return btn
 
-    
+    def cover(self):
+        """cover the list part with a frame called list_cover"""
+        # cover the list frame to show it is loading
+        self.remove_cover()
+        self.list_cover.grid()
+        self.detail_cover.grid()
+
+    def remove_cover(self):
+        """remove the list cover"""
+        self.list_cover.grid_remove()
+        self.detail_cover.grid_remove()
+
+
     def update_list_display(self, date_range : tuple[dt.datetime]):
         """ Show entry buttons that has a date at or after begin_date and also at or before the end_date,
         from future date to down to current date."""
@@ -162,7 +186,6 @@ class ViewPage(customtkinter.CTkFrame):
                 n += 1
             else:
                 self.log_entries[i][1].grid_forget()
-        
 
     def reorder_entries(self, idx: int):
         """ 
@@ -196,7 +219,7 @@ class ViewPage(customtkinter.CTkFrame):
         """ update button event that update selected entry and corresponding display """
         if(self.selected_index == -1):
             return
-
+        self.cover()
         # old timestamp
         old_timestamp = self.log_entries[self.selected_index][0]
         # new entry
@@ -209,6 +232,7 @@ class ViewPage(customtkinter.CTkFrame):
                          +"\nDate format mm/dd/yyyy."
                          +"\nTime uses the 24 hour format HH:MM.")
             self.display_entry()
+            self.remove_cover()
             return
         
         #error message for trying to generate duplicate entry with the same date&time
@@ -217,6 +241,7 @@ class ViewPage(customtkinter.CTkFrame):
             self.pop_msg("Entry with the same date & time already exist!"
                          +"\nChange cancelled.")
             self.display_entry()
+            self.remove_cover()
             return
         
         # convert drive time and rest time input to floats
@@ -231,6 +256,7 @@ class ViewPage(customtkinter.CTkFrame):
             #TODO error message or popup error window for invalid
             self.pop_msg("Drive time and Rest time error. Decimal numbers only.")
             self.display_entry()
+            self.remove_cover()
             return
         
         old_entry = self.sqlManager.get_entry(old_timestamp)
@@ -239,6 +265,7 @@ class ViewPage(customtkinter.CTkFrame):
            and new_entry.drivetime == old_entry.drivetime
            and new_entry.resttime == old_entry.resttime):
             self.pop_msg("No Change Made.")
+            self.remove_cover()
             return
 
         #Get user confirmation
@@ -252,6 +279,7 @@ class ViewPage(customtkinter.CTkFrame):
         ]
         if(not self.get_action_confirm(msg_list)):
             self.pop_msg("Update Cancelled.")
+            self.remove_cover()
             return
         
         # save the change made to self.last_change and show the undo button
@@ -271,6 +299,7 @@ class ViewPage(customtkinter.CTkFrame):
         print("update button click on entry: " + str(self.selected_index))
         print("  previous content: ", end="")
         print(self.last_change)
+        self.remove_cover()
     
 
     def delete_button_click(self):
@@ -281,7 +310,7 @@ class ViewPage(customtkinter.CTkFrame):
             return
         print("delete button clicked for entry " + str(self.selected_index))
         self.display_entry()
-
+        self.cover()
         #popup window to confirm delete
         msg_list = [
                      ["Delete the following entry?"]
@@ -293,6 +322,7 @@ class ViewPage(customtkinter.CTkFrame):
         if(not self.get_action_confirm(msg_list=msg_list)):
             # Notify the user the deletion is cancelled
             self.pop_msg("Delete Cancelled")
+            self.remove_cover()
             return
 
         
@@ -309,19 +339,29 @@ class ViewPage(customtkinter.CTkFrame):
         print("delete button clicked, # of entry after delete: " + str(len(self.log_entries)))
         print("  deleted content: ", end = "")
         print(self.last_change)
+        self.remove_cover()
 
 
     def find_index(self, s: str):
         """ return the index of the first entry that contain string s """
-        for i in range(len(self.log_entries)):
-            if s == LogEntry.to_str(self.log_entries[i][0]):
-                return i
+        s = LogEntry.create_timestamp(s)
+        low = 0
+        high = len(self.log_entries) - 1
+        while(low <= high):
+            mid = int(low + (high - low) / 2)
+            if s == self.log_entries[mid][0]:
+                return mid
+            elif s < self.log_entries[mid][0]:
+                low = mid + 1
+            else:
+                high = mid - 1
         return -1
     
     def entry_button_clicked(self, btn: customtkinter.CTkButton):
         """ reponse when an entry button btn in the entry list is clicked """
         self.deselect_current_entry()
         self.select_entry(self.find_index(btn.cget("text")))
+
 
     def deselect_current_entry(self):
         """change currently selected entry button color back to original.
@@ -356,7 +396,6 @@ class ViewPage(customtkinter.CTkFrame):
         print("display entry: " + str(entry))
 
         self.date_input.set_date(entry.timestamp)
-        
         self.time_input.insert(0, entry.get_time_str())
         self.drive_time_input.insert(0, entry.drivetime)
         self.rest_time_input.insert(0, entry.resttime)
@@ -374,7 +413,9 @@ class ViewPage(customtkinter.CTkFrame):
 
     def search_button_click(self):
         """ search and display matching entry buttons within the range defined """
+        self.cover()
         self.update_list_display(self.get_date_range())
+        self.remove_cover()
 
     
     def show_undo_btn(self):
@@ -386,7 +427,7 @@ class ViewPage(customtkinter.CTkFrame):
         """ action when undo button is click, restore to before the last change were made"""
         print("undo button clicked, last_change in record: ", end='')
         print(self.last_change)
-
+        self.cover()
         # the last change made is a delete
         if (len(self.last_change) == 1):
             #popup window to confirm the change
@@ -399,7 +440,9 @@ class ViewPage(customtkinter.CTkFrame):
             print("Undo button: confirm to undo last delete.")
             if(not self.get_action_confirm(msg_list=msg_list)):
                 self.pop_msg("Undo Cancelled.")
+                self.remove_cover()
                 return # do nothing if the action is cancelled
+            
             btn = self.create_entry_button(LogEntry.to_str(self.last_change[0].timestamp))
             btn.grid(row = len(self.log_entries), column=0, sticky="ew")
             self.log_entries.append([self.last_change[0].timestamp, btn])
@@ -425,9 +468,12 @@ class ViewPage(customtkinter.CTkFrame):
                    , str(self.last_change[0].get_resttime())]
             ]
             print("Undo button: store from previous update")
+
             if(not self.get_action_confirm(msg_list)):
                 self.pop_msg("Undo Cancelled.")
+                self.remove_cover() # remove the loading screen
                 return # action cancelled
+            
             # Made the change in UI and database
             self.sqlManager.update_entry(timestamp=self.last_change[1], entry=self.last_change[0])
             self.log_entries[idx][0] = self.last_change[0].timestamp
@@ -436,17 +482,20 @@ class ViewPage(customtkinter.CTkFrame):
 
         self.last_change = []
         self.undo_btn.grid_forget()
+        self.remove_cover()
 
     def clear_button_click(self):
         """Methods when clear button on the list sections is clicked, will remove all the content in range selection
         and show all the entries, 
         and will remove the right-side display details and deselect all entries"""
+        self.cover()
         self.begin_date_input.clear()
         self.end_date_input.clear()
         self.update_list_display(self.get_date_range())
         self.deselect_current_entry()
         self.remove_detail()
         self.selected_index = -1
+        self.remove_cover()
 
     def pop_msg(self, msg : str):
         """Pop up window to show a message"""
