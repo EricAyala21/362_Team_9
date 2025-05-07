@@ -17,8 +17,9 @@ class ViewPage(customtkinter.CTkFrame):
     def __init__(self, master, sql_filename):
         super().__init__(master)
 
-        self.columnconfigure(index = 1, weight = 1)
-        self.rowconfigure(index = 3, weight = 1)
+        self.columnconfigure(1, weight = 1)
+        self.rowconfigure([0,1], weight = 0)
+        self.rowconfigure(3, weight = 1)
 
         # open sql file
         self.sqlManager = None
@@ -73,7 +74,7 @@ class ViewPage(customtkinter.CTkFrame):
         self.date_label.grid(row=2, column=0, columnspan=2, padx=5, sticky="sw")
 
         self.date_input = CustomDateEntry(self.detail_frame)
-        self.date_input.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="nw")
+        self.date_input.grid(row=3, column=0, columnspan=2, padx=5, sticky="nwe")
 
         self.time_label = customtkinter.CTkLabel(self.detail_frame, text="Time")
         self.time_label.grid(row=2, column=2, columnspan=2, padx=5, sticky="sw")
@@ -113,13 +114,13 @@ class ViewPage(customtkinter.CTkFrame):
         self.begin_date_label.grid(row = 0, column = 0, padx=(5,0), pady=(10,0), sticky="e")
 
         self.begin_date_input = CustomDateEntry(self)
-        self.begin_date_input.grid(row = 0, column = 1, padx=5, pady=(10,0), sticky="w")
+        self.begin_date_input.grid(row = 0, column = 1, padx=5, pady=(10,0), sticky="we")
 
         self.end_date_label = customtkinter.CTkLabel(self, text = "To")
         self.end_date_label.grid(row = 1, column = 0, padx=(5,0), pady=(0,5), sticky="e")
 
         self.end_date_input = CustomDateEntry(self)
-        self.end_date_input.grid(row = 1, column = 1, padx=5, pady=(0,5), sticky="w")
+        self.end_date_input.grid(row = 1, column = 1, padx=5, pady=(0,5), sticky="we")
 
         self.search_button = customtkinter.CTkButton(self, text="Search"
                                                      , command=self.search_button_click, width=70)
