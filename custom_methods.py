@@ -32,6 +32,7 @@ def checkDate(date):
     else:
         return False
 
+
 def checkTime(time):
     form = re.compile("^[0-2][0-9]:[0-6][0-9]$")# is establishing the time format xx:xx
     if form.match(time):

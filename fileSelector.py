@@ -24,6 +24,7 @@ class Users(customtkinter.CTkFrame):
 
         self.title = customtkinter.CTkLabel(self,text = "Choose a user:",font=("Helvetica",28))
         self.title.grid(row = 0, column = 1, padx = 5, pady = (5,0), sticky ="news")
+        
         n = 0
         for entry in self.file_Names:
             btn = self.create_entry_button(entry.replace(".db",""))

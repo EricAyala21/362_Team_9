@@ -153,7 +153,6 @@ class Daily_Log(customtkinter.CTkFrame):
             self.dateInput.configure(state = "normal")
             self.timeInput.configure(state = "normal")
 
-
     #will save the information into the viewpage array
     def save(self):
 

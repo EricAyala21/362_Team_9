@@ -16,7 +16,6 @@ class file_manage:
 
         self.setup_gui()
 
-
     def setup_gui(self):
         self.page = fileSelector.Users(master = root)
         self.page.pack(pady = 20, padx= 60,fill = "both", expand = True )

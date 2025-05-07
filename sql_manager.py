@@ -17,7 +17,7 @@ class SqlManager:
         cur(sqlite3.Cursor): SQLite cursor for the SQL connection con
     """
     TIMESTAMP_FORMAT = "%m/%d/%Y %H:%M"
-
+    
     def __init__(self, filename : str):
         """
         Constructor of the SqlManager. It will try to connect to the filename provided.
