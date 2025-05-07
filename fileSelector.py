@@ -16,16 +16,18 @@ class Users(customtkinter.CTkFrame):
       
 
         self.button = customtkinter.CTkButton(self,text = "Add User",command = self.inputFunction)
-        self.button.grid(row  = 1, column = 2,padx = 5,pady=10,  sticky = "ew")
+        self.button.grid(row  = 3, column = 1,padx = 5,pady=2,  sticky = "ew")
 
 
         self.list_frame = customtkinter.CTkScrollableFrame(self)
-        self.list_frame.grid(row = 1 , column = 1, padx = 5,  pady=5 , sticky = "news")
+        self.list_frame.grid(row = 2 , column = 1, padx = 2,  pady=10 , sticky = "news")
 
+        self.title = customtkinter.CTkLabel(self,text = "Choose a user:",font=("Helvetica",28))
+        self.title.grid(row = 0, column = 1, padx = 5, pady = (5,0), sticky ="news")
         n = 0
         for entry in self.file_Names:
             btn = self.create_entry_button(entry.replace(".db",""))
-            btn.grid(row = n, column = 0,padx=40, sticky = "ew")
+            btn.grid(row = n, column = 0,padx=50,pady =(0,0.8), sticky = "nsew")
             n += 1
     def inputFunction(self):
         self.after_idle(self.show_dialog)
@@ -43,7 +45,7 @@ class Users(customtkinter.CTkFrame):
 
 
     def create_entry_button(self,fileName):
-        btn = customtkinter.CTkButton(self.list_frame,text = fileName,corner_radius = 0)
+        btn = customtkinter.CTkButton(self.list_frame,text = fileName,corner_radius = 5,width = 280, height= 50)
         btn.configure(command = (lambda b = btn: self.entry_button_clicked(fileName)))
         return btn
         
@@ -92,8 +94,17 @@ class Users(customtkinter.CTkFrame):
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
 
+        button4 = customtkinter.CTkButton(self,
+                                          text = "Log Out",
+                                          command = self.createLogout,
+                                          height = 30,
+                                          width = 120,
+                                          corner_radius = 25)
+        button4.grid (row = 1, column = 3, padx = 10, pady = (10, 5))
+
+
         page = viewpage.ViewPage(self, self.file_Names[self.position]) # TODO maybe can change to the selected file?
-        page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
+        page.grid(row=2, column=0, columnspan=5, padx = (50,0), pady = (0,10), sticky="nswe")
 
 
     def Analytics(self):
@@ -126,8 +137,18 @@ class Users(customtkinter.CTkFrame):
                                           fg_color = "#d7c5db",
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = (10, 5))
+
+
+        button4 = customtkinter.CTkButton(self,
+                                          text = "Log Out",
+                                          command = self.createLogout,
+                                          height = 30,
+                                          width = 120,
+                                          corner_radius = 25)
+        button4.grid (row = 1, column = 5, padx = 10, pady = (10, 5))
+
         page = Analytics.AnalyticsPage(self, self.file_Names[self.position]) # TODO maybe can change to the selected file?
-        page.grid(row=3, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
+        page.grid(row=3, column=0, columnspan=4, padx = (50,0), pady = (0,10), sticky="nswe")
 
     def DailyLog(self):
         self.clearWindow()
@@ -159,8 +180,19 @@ class Users(customtkinter.CTkFrame):
                                           width = 120,
                                           corner_radius = 25)
         button3.grid (row = 1, column = 2, padx = 10, pady = 10)
+
+
+        button4 = customtkinter.CTkButton(self,
+                                          text = "Log Out",
+                                          command = self.createLogout,
+                                          height = 30,
+                                          width = 120,
+                                          corner_radius = 25)
+        button4.grid (row = 1, column = 5, padx = 10, pady = (10, 5))
+
+
         page = daily_log.Daily_Log(self, self.file_Names[self.position]) # temporarily use the first file
-        page.grid(row=2, column=0, columnspan=3, padx = 10, pady = (0,10), sticky="nswe")
+        page.grid(row=2, column=0, columnspan=4, padx = (50,0), pady = (0,10), sticky="nswe")
 
         
         
@@ -212,5 +244,9 @@ class Users(customtkinter.CTkFrame):
         n = 0
         for entry in self.file_Names:
             btn = self.create_entry_button(entry.replace(".db",""))
-            btn.grid(row = n, column = 0,padx=40, sticky = "ew")
+            btn.grid(row = n, column = 0,padx=50,pady =(0,0.8), sticky = "nsew")
             n += 1
+
+    def createLogout(self):
+        self.clearWindow()
+        self.leftFrame()

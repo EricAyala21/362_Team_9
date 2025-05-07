@@ -2,6 +2,7 @@ import customtkinter
 from time import strftime
 import sqlite3
 import custom_methods
+import viewpage
 
 class Daily_Log(customtkinter.CTkFrame):
     def __init__(self, master, filename):
@@ -109,12 +110,8 @@ class Daily_Log(customtkinter.CTkFrame):
         if custom_methods.checkTime(self.TInput) == True:
             return True
         else:
-            print("Theres an error In DrivingTime")
-            self.errorTime =customtkinter.CTkToplevel(self)  # master argument is optional  
-            self.errorTime.title("Error")
-            self.errorTimeLabel = customtkinter.CTkLabel(self.errorTime,text = "Error please input in the xx:xx format")
-            self.errorTimeLabel.grid(row = 2, column = 2, padx =10, pady =10, sticky = "news")
-            self.errorTime.geometry("250x40")
+            print("Theres an error In check Time")
+            viewpage.ViewPage.pop_msg(self,"Please input in xx:xx format") 
    
     def checkDates(self):
         self.DInput = self.dateInput.get()
@@ -122,39 +119,29 @@ class Daily_Log(customtkinter.CTkFrame):
         if custom_methods.checkDate(self.DInput) == True:
             return True
         else:
-            print("Theres an error In DrivingTime")
-            self.errorDates =customtkinter.CTkToplevel(self)  # master argument is optional  
-            self.errorDates.title("Error")
-            self.errorDatesLabel = customtkinter.CTkLabel(self.errorDates,text = "Error please input in the xx/xx/xxxx format")
-            self.errorDatesLabel.grid(row = 2, column = 2, padx =10, pady =10, sticky = "news")
-            self.errorDates.geometry("250x40")
 
+            viewpage.ViewPage.pop_msg(self,"Error please input in xx/xx/xxxx format") 
+            print("Theres an error In check Dates")
+            
         
     def checkDInput(self):
         self.dData = self.DTInput.get()
-    
-        if custom_methods.checkTimeInputs(self.dData) == True:
-            return True
-        else:
+        try:
+            if custom_methods.checkTimeInputs(float(self.dData)) == True:
+                return True
+        except:
             print("Theres an error In DrivingTime")
-            self.errorDrive =customtkinter.CTkToplevel(self)  # master argument is optional  
-            self.errorDrive.title("Error")
-            self.errorDriveLabel = customtkinter.CTkLabel(self.errorDrive,text = "Error please input a numerical value")
-            self.errorDriveLabel.grid(row = 2, column = 2, padx =10, pady =10, sticky = "news")
-            self.errorDrive.geometry("250x40")
+            viewpage.ViewPage.pop_msg(self,"Error please input a numerical value") 
     
 
     def checkRInput(self):
         self.RData = self.RTInput.get()
-        if custom_methods.checkTimeInputs(self.RData) == True:
-            return True
-        else:
-            print("Theres an error In DrivingTime")
-            self.errorRest =customtkinter.CTkToplevel(self)  # master argument is optional  
-            self.errorRest.title("Error")
-            self.errorRestLabel = customtkinter.CTkLabel(self.errorRest,text = "Error please input a numerical value")
-            self.errorRestLabel.grid(row = 2, column = 2, padx =10, pady =10, sticky = "news")
-            self.errorRest.geometry("250x40")
+        try:
+            if custom_methods.checkTimeInputs(float(self.RData)) == True:
+                return True
+        except:
+            print("Theres an error In Resting Time")
+            viewpage.ViewPage.pop_msg(self,"Please input a numerical value") 
         
     #will check if the box is checked so it can allow the user to edit the text boxs for time and date
     def checked(self):#once the check box is in the unchecked position 
@@ -185,6 +172,7 @@ class Daily_Log(customtkinter.CTkFrame):
             self.checkBox.deselect()
             self.current_time()
             self.current_day()
+            viewpage.ViewPage.pop_msg(self,"Your data was saved") 
         else:
             print("Error there is one wrong input")
 
