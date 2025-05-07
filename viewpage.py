@@ -482,6 +482,7 @@ class ViewPage(customtkinter.CTkFrame):
 
         self.last_change = []
         self.undo_btn.grid_forget()
+        self.pop_msg("Undo Complete.")
         self.remove_cover()
 
     def clear_button_click(self):
@@ -497,10 +498,11 @@ class ViewPage(customtkinter.CTkFrame):
         self.selected_index = -1
         self.remove_cover()
 
-    def pop_msg(self, msg : str):
+    def pop_msg(self, msg : str, width = 350, height = 150):
         """Pop up window to show a message"""
         popup = SelectionWindow(title = "Message", options=["Done"], var=customtkinter.StringVar())
-        popup.geometry("300x100")
+        popup.geometry(f'{width}x{height}')
+        popup.center()
         popup.set_content([[msg]],[1])
         popup.focus()
         popup.grab_set()
@@ -527,10 +529,12 @@ class ViewPage(customtkinter.CTkFrame):
             header = msg_list[0][0]
             msg_list = msg_list[1:]
         if(popup == None or not popup.winfo_exists()):
-            popup = SelectionWindow(title="Acition Confirm"
+            popup = SelectionWindow(title="Action Confirm"
                                     , options = ["Yes", "Cancel"]
                                     , var = confirmation)
             popup.set_content(msg_list, columns, header)
+            popup.center()
+            popup.focus()
             popup.grab_set()
             self.wait_window(popup)
         else:
