@@ -30,7 +30,7 @@ class CustomDateEntry (ctk.CTkFrame):
     def create_date_entry(self):
         """generate a new date entry box, if exists already, will delete it before create new box."""
         if self.date_entry != None:
-            self.date_entry.pack_forget()
+            self.date_entry.destroy()
 
         if self.is_win:
             self.date_entry = tkcalendar.DateEntry(self, font = self.tk_font
