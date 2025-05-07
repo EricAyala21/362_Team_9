@@ -103,6 +103,24 @@ class SqlManager:
         self.con.commit()
         return deleted_entry
 
+    def get_time_data_between_dates(self, start_date, end_date):
+        """
+        Fetch drive and rest time logs between two dates from the database.
+        Returns a list of rows: [(timestamp, drivetime, resttime), ...]
+        """
+        try:
+            query = """
+            SELECT timestamp, drivetime, resttime
+            FROM logs
+            WHERE date(timestamp) BETWEEN ? AND ?
+            ORDER BY timestamp;
+            """
+            self.cur.execute(query, (start_date, end_date))
+            return self.cur.fetchall()
+        except Exception as e:
+            print(f"Database error: {e}")
+            return []
+
     def _entry_to_row(self, entry : LogEntry):
         """
         helper method that create a row representation of the entry to be stored in database.

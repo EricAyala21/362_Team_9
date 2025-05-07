@@ -5,7 +5,7 @@ from tkinter import filedialog
 import daily_log
 import viewpage
 import sqlite3
-import Analytics
+import analytics as Analytics
 
 
 
