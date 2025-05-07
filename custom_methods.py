@@ -26,11 +26,12 @@ def datetime_to_str(d: datetime.datetime):
     return d.strftime(FORMAT_STR)
 
 def checkDate(date):
-    form = re.compile("^[0-9]{4}/[0-1][0-9]/[0-3][0-9]$") #is establishing the xxxx/xx/xx format
+    form = re.compile("^[0-1][0-9]/[0-3][0-9]/[0-9]{4}$") #is establishing the xxxx/xx/xx format
     if form.match(date): #checks if the date matches the given format
         return True
     else:
         return False
+
 
 def checkTime(time):
     form = re.compile("^[0-2][0-9]:[0-6][0-9]$")# is establishing the time format xx:xx
