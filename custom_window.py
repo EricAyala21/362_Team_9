@@ -40,6 +40,12 @@ class SelectionWindow(ctk.CTkToplevel):
         self.content_frame.grid_forget()
         self.content_frame.set(msg_list, column_weights, header=header)
         self.content_frame.grid(row = 0, column = 0, sticky = "nsew", padx = 10, pady = 10)
+    
+    def center(self):
+        """move the popup window to the middle of screen"""
+        x = self.winfo_screenwidth() / 2 - self.winfo_width() / 2
+        y = self.winfo_screenheight() / 2 - self.winfo_height() / 2
+        self.geometry(f"""+{int(x)}+{int(y)}""")
 
 
 class FormattedTextFrame(ctk.CTkFrame):
