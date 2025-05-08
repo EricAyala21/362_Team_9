@@ -9,6 +9,8 @@ import analytics as Analytics
 
 import fileSelector
 
+import ctypes
+ctypes.windll.shcore.SetProcessDpiAwareness(0)
 
 class file_manage:
     def __init__(self, root):
