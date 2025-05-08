@@ -16,138 +16,147 @@ class ViewPage(customtkinter.CTkFrame):
 
     def __init__(self, master, sql_filename):
         super().__init__(master)
-
-        self.columnconfigure(1, weight = 1)
-        self.rowconfigure([0,1], weight = 0)
-        self.rowconfigure(3, weight = 1)
+  # allow the grid to stretch
+        self.columnconfigure(index=1, weight=1)
+        self.rowconfigure(index=3, weight=1)
 
         # open sql file
-        self.sqlManager = None
-        try: 
+        try:
             self.sqlManager = SqlManager(sql_filename)
-        except: # open sql file failed
+        except Exception:
             self.pop_msg("ViewPage: Sql db file open failed.")
             print("Sql file open failed")
             return
-        
+
         # get the timestamp list from database
         self.log_entries = self.sqlManager.get_timestamps()
-
-        # record the last modification, at index 0, is the original LogEntry. 
-        # index 1 is the new timestamp if last change made is an update. nothing if it is a delete
         self.last_change = []
-
-        # selected entry index in the list log_entries
         self.selected_index = -1
 
-        self.init_detail_display() # initiate elements on the right side of the page
-        self.init_list_display() # initiate elements on the left side of the page
-    
-    # right side of the view page will show the detail of the selected log entry and provide the ability to edit it
+        # initialize both panels
+        self.init_detail_display()
+        self.init_list_display()
+
     def init_detail_display(self):
         self.detail_frame = customtkinter.CTkFrame(self)
-        self.detail_frame.grid(row = 0, rowspan = 4, column = 2, sticky = "nswe", padx=(0,10), pady=10)
+        self.detail_frame.grid(row=0, rowspan=4, column=2, sticky="nswe", padx=(0,10), pady=10)
+        # allow stretching and set a fixed minimum size
         self.detail_frame.grid_rowconfigure((0,2), weight=1)
         self.detail_frame.grid_rowconfigure((1,3,4), weight=2)
         self.detail_frame.grid_columnconfigure((0,1,2,3), weight=1)
-        #a loading display that cover the detail area to prevent modification while changing content
-        self.detail_cover = customtkinter.CTkFrame(self) 
-        self.detail_cover.grid(row = 0, rowspan = 4, column = 2, sticky = "nswe", padx=(0,10), pady=10)
-        self.detail_cover.grid_remove()
-        loading_label = customtkinter.CTkLabel(self.detail_cover, text = "Loading...")
-        loading_label.pack(expand = True, fill = "both")
+        self.detail_frame.grid_propagate(False)
+        self.detail_frame.configure(width=400, height=200)
 
+        # smaller, consistent label & entry fonts
+        header_font = ("Arial", 14, "bold")
+        entry_font  = ("Arial", 12)
 
-        self.drive_time_label = customtkinter.CTkLabel(self.detail_frame, text="Driving Time")
+        # Driving Time
+        self.drive_time_label = customtkinter.CTkLabel(
+            self.detail_frame,
+            text="Driving Time",
+            font=("Helvetica", 14)
+        )
         self.drive_time_label.grid(row=0, column=0, columnspan=2, padx=5, sticky="sw")
 
-        self.drive_time_input = customtkinter.CTkEntry(self.detail_frame)
+        self.drive_time_input = customtkinter.CTkEntry(
+            self.detail_frame,
+            font=entry_font
+        )
         self.drive_time_input.grid(row=1, column=0, columnspan=2, padx=5, sticky="nwe")
 
-        self.rest_time_label = customtkinter.CTkLabel(self.detail_frame, text="Resting Time")
+        # Resting Time
+        self.rest_time_label = customtkinter.CTkLabel(
+            self.detail_frame,
+            text="Resting Time",
+            font=header_font
+        )
         self.rest_time_label.grid(row=0, column=2, columnspan=2, padx=5, sticky="sw")
 
-        self.rest_time_input = customtkinter.CTkEntry(self.detail_frame)
+        self.rest_time_input = customtkinter.CTkEntry(
+            self.detail_frame,
+            font=entry_font
+        )
         self.rest_time_input.grid(row=1, column=2, columnspan=2, padx=5, sticky="nwe")
 
-        self.date_label = customtkinter.CTkLabel(self.detail_frame, text="Date")
+        # Date picker
+        self.date_label = customtkinter.CTkLabel(
+            self.detail_frame,
+            text="Date",
+            font=header_font
+        )
         self.date_label.grid(row=2, column=0, columnspan=2, padx=5, sticky="sw")
 
         self.date_input = CustomDateEntry(self.detail_frame)
-        self.date_input.grid(row=3, column=0, columnspan=2, padx=5, sticky="nwe")
+        self.date_input.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky="nwe")
 
-        self.time_label = customtkinter.CTkLabel(self.detail_frame, text="Time")
+        # Time entry
+        self.time_label = customtkinter.CTkLabel(
+            self.detail_frame,
+            text="Time",
+            font=header_font
+        )
         self.time_label.grid(row=2, column=2, columnspan=2, padx=5, sticky="sw")
-        
-        self.time_input = customtkinter.CTkEntry(self.detail_frame)
+
+        self.time_input = customtkinter.CTkEntry(
+            self.detail_frame,
+            font=entry_font
+        )
         self.time_input.grid(row=3, column=2, columnspan=2, padx=5, sticky="nwe")
 
-        self.update_btn = customtkinter.CTkButton(self.detail_frame, 
-                                                 text="UPDATE",
-                                                 width=50, 
-                                                 command=self.update_button_click)
-        self.update_btn.grid(row=4, column=3, columnspan=1, padx=(0,5), sticky="we")
+        # Action buttons
+        self.update_btn = customtkinter.CTkButton(
+            self.detail_frame,
+            text="UPDATE",
+            width=80,
+            command=self.update_button_click
+        )
+        self.update_btn.grid(row=4, column=3, padx=(0,5), sticky="we")
 
-        self.undo_btn = customtkinter.CTkButton(self.detail_frame, 
-                                                width=40, 
-                                                height=14, 
-                                                command=self.undo_button_click,
-                                                text="undo", 
-                                                text_color="black", 
-                                                fg_color=self.TRANSPARENT, 
-                                                hover_color="#ffffff")
-
-        self.delete_btn = customtkinter.CTkButton(self.detail_frame, 
-                                                width=40, 
-                                                height=14, 
-                                                command=self.delete_button_click,
-                                                text="delete",
-                                                text_color=self.DELETE_BTN_TEXT_COLOR, 
-                                                fg_color=self.DELETE_BTN_COLOR, 
-                                                hover_color=self.DELETE_BTN_HOVER_COLOR)
+        self.delete_btn = customtkinter.CTkButton(
+            self.detail_frame,
+            text="delete",
+            width=60,
+            height=20,
+            text_color=self.DELETE_BTN_TEXT_COLOR,
+            fg_color=self.DELETE_BTN_COLOR,
+            hover_color=self.DELETE_BTN_HOVER_COLOR,
+            command=self.delete_button_click
+        )
         self.delete_btn.grid(row=4, column=0, padx=(10,0), pady=10, sticky="w")
-
-
-    # initiate left side for search and select from a list of log entries, it will interact
     def init_list_display(self):
-        self.begin_date_label = customtkinter.CTkLabel(self, text = "From")
-        self.begin_date_label.grid(row = 0, column = 0, padx=(5,0), pady=(10,0), sticky="e")
+        # left-side search and selection
+        self.begin_date_label = customtkinter.CTkLabel(self, text="From", font=("Arial", 14))
+        self.begin_date_label.grid(row=0, column=0, padx=(5,0), pady=(10,0), sticky="e")
 
         self.begin_date_input = CustomDateEntry(self)
-        self.begin_date_input.grid(row = 0, column = 1, padx=5, pady=(10,0), sticky="we")
+        self.begin_date_input.grid(row=0, column=1, padx=5, pady=(10,0), sticky="w")
 
-        self.end_date_label = customtkinter.CTkLabel(self, text = "To")
-        self.end_date_label.grid(row = 1, column = 0, padx=(5,0), pady=(0,5), sticky="e")
+        self.end_date_label = customtkinter.CTkLabel(self, text="To", font=("Arial", 14))
+        self.end_date_label.grid(row=1, column=0, padx=(5,0), pady=(0,5), sticky="e")
 
         self.end_date_input = CustomDateEntry(self)
-        self.end_date_input.grid(row = 1, column = 1, padx=5, pady=(0,5), sticky="we")
+        self.end_date_input.grid(row=1, column=1, padx=5, pady=(0,5), sticky="w")
 
-        self.search_button = customtkinter.CTkButton(self, text="Search"
-                                                     , command=self.search_button_click, width=70)
-        self.search_button.grid(row = 2, column = 1, padx = (0,10), pady=(0,5), sticky = "ew")
+        self.search_button = customtkinter.CTkButton(self, text="Search",
+                                                     command=self.search_button_click,
+                                                     width=70)
+        self.search_button.grid(row=2, column=1, padx=(0,10), pady=(0,5), sticky="ew")
 
-        self.clear_button = customtkinter.CTkButton(self, text="clear"
-                                                     , command=self.clear_button_click
-                                                     , width=20)
-        self.clear_button.grid(row = 2, column = 0, padx = (10,5), pady=(0,5))
+        self.clear_button = customtkinter.CTkButton(self, text="clear",
+                                                    command=self.clear_button_click,
+                                                    width=60)
+        self.clear_button.grid(row=2, column=0, padx=(10,5), pady=(0,5), sticky="w")
 
         self.list_frame = customtkinter.CTkScrollableFrame(self)
-        self.list_frame.grid(row = 3, column = 0, columnspan = 2, padx=10, pady=(0,10), sticky = "nswe")
+        self.list_frame.grid(row=3, column=0, columnspan=2,
+                              padx=10, pady=(0,10), sticky="nswe")
         self.list_frame.columnconfigure(0, weight=1)
-        self.list_cover = customtkinter.CTkFrame(self)
-        self.list_cover.grid(row = 3, column = 0, columnspan = 2, padx=10, pady=(0,10), sticky = "nswe")
-        self.list_cover.grid_remove()
-        loading_label = customtkinter.CTkLabel(self.list_cover, text = "Loading...")
-        loading_label.pack(expand = True, fill = "both")
 
-        # Initialize the list of buttons with all available log entries, the button will be stored in log_entries[1]
-        n = 0
-        for entry in self.log_entries:
+        for idx, entry in enumerate(self.log_entries):
             btn = self.create_entry_button(LogEntry.to_str(entry[0]))
-            btn.grid(row=n, column = 0, sticky = "ew")
+            btn.grid(row=idx, column=0, sticky="ew")
             entry.append(btn)
-            n += 1
-        
     
     def create_entry_button(self, entry_datetime: str):
         """ create a new entry in the entry list UI """
