@@ -161,22 +161,15 @@ class Daily_Log(customtkinter.CTkFrame):
 
         if self.checkDates() and self.checkDInput() and self.checkRInput() and self.checkTimes():
             self.timestamp = self.DInput + " "+ self.TInput
-            # self.logTempEntries = [[self.timestamp,float(self.DTInput.get()),float(self.RTInput.get())]]
-            # print(self.timestamp)
-            # #self.cur.execute("DELETE FROM logs")  # Delete all rows
-            # self.cur.executemany("INSERT OR IGNORE INTO logs VALUES (?, ?, ?)", self.logTempEntries)
-            # self.con.commit()
             entry = LogEntry(timestamp=LogEntry.create_timestamp(self.timestamp)
                              , drivetime=float(self.DTInput.get())
                              , resttime=float(self.RTInput.get()))
             manager = SqlManager(self.filename)
             manager.add_entry(entry)
-            
+
             print("entry list after save: ", end='')
             print(self.cur.execute("SELECT timestamp FROM logs").fetchall())
             self.deleteInputs()
-            self.current_time()
-            self.current_day()
             self.checkBox.deselect()
             self.current_time()
             self.current_day()
