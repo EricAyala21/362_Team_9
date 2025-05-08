@@ -1,7 +1,7 @@
 import customtkinter
 import daily_log
 import viewpage
-import Analytics
+import analytics
 import sqlite3
 
 class Users(customtkinter.CTkFrame):
