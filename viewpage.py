@@ -260,11 +260,15 @@ class ViewPage(customtkinter.CTkFrame):
         try:
             if dt_str != "":
                 new_entry.drivetime = float(dt_str)
+                if(new_entry.drivetime < 0):
+                    ValueError(dt_str)
             if rt_str != "":
                 new_entry.resttime = float(rt_str)
+                if(new_entry.resttime < 0):
+                    ValueError(rt_str)
         except:
             #TODO error message or popup error window for invalid
-            self.pop_msg("Drive time and Rest time error. Decimal numbers only.")
+            self.pop_msg("Drive time or Rest time error. Positive decimal numbers only.")
             self.display_entry()
             self.remove_cover()
             return
@@ -309,6 +313,7 @@ class ViewPage(customtkinter.CTkFrame):
         print("update button click on entry: " + str(self.selected_index))
         print("  previous content: ", end="")
         print(self.last_change)
+        self.pop_msg("Update Complete.")
         self.remove_cover()
     
 

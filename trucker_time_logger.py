@@ -16,8 +16,12 @@ try:
 except:
     pass  # This will only affect Windows, so skip if unsupported
 
+<<<<<<< HEAD
 # Main application class to handle file selection and page switching
 class FileManager:
+=======
+class file_manage:
+>>>>>>> da12cc5dedbce6b691fdcbd92a30fde952e0a4ea
     def __init__(self, root):
         self.root = root
         self.root.geometry("1024x600")
@@ -29,6 +33,7 @@ class FileManager:
         self.db_conn = None    # Active database connection
         self.db_cursor = None  # Database cursor
 
+<<<<<<< HEAD
         self.setup_data()
         self.create_tabs()
 
@@ -79,3 +84,16 @@ if __name__ == "__main__":
     root.title("Trucker Time Logger")
     app = FileManager(root)
     root.mainloop()
+=======
+    def setup_gui(self):
+        self.page = fileSelector.Users(master = root)
+        self.page.pack(pady = 20, padx= 60,fill = "both", expand = True )
+        self.page.grid_columnconfigure((0,1,2),weight = 1)
+        self.page.grid_rowconfigure(1,weight = 1)
+        self.page.grid_rowconfigure(2,weight = 6)          
+root = customtkinter.CTk()
+root.title("Trucker Time Tracker")
+root.tk.call('tk', 'scaling', 1.0)
+app = file_manage(root)
+root.mainloop()
+>>>>>>> da12cc5dedbce6b691fdcbd92a30fde952e0a4ea
