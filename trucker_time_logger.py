@@ -9,9 +9,6 @@ import analytics as Analytics
 
 import fileSelector
 
-import ctypes
-ctypes.windll.shcore.SetProcessDpiAwareness(0)
-
 class file_manage:
     def __init__(self, root):
         self.root = root
@@ -32,5 +29,7 @@ class file_manage:
         self.page.grid_rowconfigure(1,weight = 1)
         self.page.grid_rowconfigure(2,weight = 6)          
 root = customtkinter.CTk()
+root.title("Trucker Time Tracker")
+root.tk.call('tk', 'scaling', 1.0)
 app = file_manage(root)
 root.mainloop()
